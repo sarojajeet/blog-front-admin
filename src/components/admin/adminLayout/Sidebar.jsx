@@ -4,12 +4,6 @@ import { AppstoreOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import "./Sidebar.css";
 import { BiCategory } from "react-icons/bi";
-import { BiSolidPurchaseTag } from "react-icons/bi";
-import { FaUsers } from "react-icons/fa";
-import { FaFont } from "react-icons/fa";
-import { PiUploadSimpleBold } from "react-icons/pi";
-import { FaShapes } from "react-icons/fa";
-import { FaRegFileAlt } from "react-icons/fa"; // Template Icon
 
 const Sidebar = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -43,89 +37,11 @@ const Sidebar = () => {
       ),
     },
     {
-      key: "/admin/sub-category",
+      key: "/admin/category",
       icon: <BiCategory />,
       label: (
-        <Link to="/admin/sub-category" onClick={onClose}>
-          Sub Category
-        </Link>
-      ),
-    },
-    {
-      key: "templates",
-      icon: <FaRegFileAlt />,
-      label: "Templates",
-      children: [
-        {
-          key: "/admin/templates/add",
-          label: (
-            <Link to="/admin/templates/add" onClick={onClose}>
-              Add Template
-            </Link>
-          ),
-        },
-        {
-          key: "/admin/templates/list",
-          label: (
-            <Link to="/admin/templates/list" onClick={onClose}>
-              Template List
-            </Link>
-          ),
-        },
-      ],
-    },
-    {
-      key: "/admin/users",
-      icon: <FaUsers />,
-      label: (
-        <Link to="/admin/users" onClick={onClose}>
-          Users
-        </Link>
-      ),
-    },
-
-    {
-      key: "/admin/fonts",
-      icon: <FaFont />,
-      label: (
-        <Link to="/admin/fonts" onClick={onClose}>
-          Fonts
-        </Link>
-      ),
-    },
-    {
-      key: "/admin/uploads",
-      icon: <PiUploadSimpleBold />,
-      label: (
-        <Link to="/admin/uploads" onClick={onClose}>
-          Uploads
-        </Link>
-      ),
-    },
-    {
-      key: "/admin/elements",
-      icon: <FaShapes />,
-      label: (
-        <Link to="/admin/elements" onClick={onClose}>
-          Elements
-        </Link>
-      ),
-    },
-    {
-      key: "/admin/plans",
-      icon: <BiCategory />,
-      label: (
-        <Link to="/admin/plans" onClick={onClose}>
-          Plans
-        </Link>
-      ),
-    },
-    {
-      key: "/admin/purchase",
-      icon: <BiSolidPurchaseTag />,
-      label: (
-        <Link to="/admin/purchase" onClick={onClose}>
-          Purchase
+        <Link to="/admin/editor" onClick={onClose}>
+          Editor
         </Link>
       ),
     },

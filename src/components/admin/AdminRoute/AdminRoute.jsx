@@ -2,6 +2,8 @@ import React from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Layout from "../adminLayout/Layout";
 import Dashboard from "../../dashboard/Dashbord";
+import CategoryManager from "../../category/CategoryManager";
+import BlogEditor from "../../BlogEditor/BlogEditor";
 
 const isAuthenticated = () => {
   const userID = localStorage.getItem("userID");
@@ -25,6 +27,8 @@ const AdminRoutes = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="category" element={<CategoryManager />} />
+          <Route path="editor" element={<BlogEditor />} />
         </Route>
       </Route>
     </Routes>
