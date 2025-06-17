@@ -37,7 +37,25 @@ const Sidebar = () => {
       ),
     },
     {
-      key: "/admin/category",
+      key: "/admin/subcategories",
+      icon: <BiCategory />,
+      label: (
+        <Link to="/admin/subcategories" onClick={onClose}>
+          Sub-Category
+        </Link>
+      ),
+    },
+    {
+      key: "/admin/banner",
+      icon: <BiCategory />,
+      label: (
+        <Link to="/admin/banner" onClick={onClose}>
+          Banner
+        </Link>
+      ),
+    },
+    {
+      key: "/admin/editor",
       icon: <BiCategory />,
       label: (
         <Link to="/admin/editor" onClick={onClose}>

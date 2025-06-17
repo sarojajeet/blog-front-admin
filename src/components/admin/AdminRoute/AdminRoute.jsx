@@ -4,6 +4,9 @@ import Layout from "../adminLayout/Layout";
 import Dashboard from "../../dashboard/Dashbord";
 import CategoryManager from "../../category/CategoryManager";
 import BlogEditor from "../../BlogEditor/BlogEditor";
+import SubcategoryPage from "../../subcategory/SubcategoryPage";
+import BannerManager from "../../banner/BannerManager";
+import TextEditor from "../../BlogEditor/TextEditor";
 
 const isAuthenticated = () => {
   const userID = localStorage.getItem("userID");
@@ -28,7 +31,9 @@ const AdminRoutes = () => {
         <Route element={<Layout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="category" element={<CategoryManager />} />
-          <Route path="editor" element={<BlogEditor />} />
+          <Route path="subcategories" element={<SubcategoryPage />} />
+          <Route path="editor" element={<TextEditor />} />
+          <Route path="banner" element={<BannerManager />} />
         </Route>
       </Route>
     </Routes>
