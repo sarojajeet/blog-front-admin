@@ -7,6 +7,7 @@ import BlogEditor from "../../BlogEditor/BlogEditor";
 import SubcategoryPage from "../../subcategory/SubcategoryPage";
 import BannerManager from "../../banner/BannerManager";
 import TextEditor from "../../BlogEditor/TextEditor";
+import CategoryManagement from "../../blogCategory/CategoryManagement";
 
 const isAuthenticated = () => {
   const userID = localStorage.getItem("userID");
@@ -34,6 +35,7 @@ const AdminRoutes = () => {
           <Route path="subcategories" element={<SubcategoryPage />} />
           <Route path="editor" element={<TextEditor />} />
           <Route path="banner" element={<BannerManager />} />
+          <Route path="blog-category" element={<CategoryManagement />} />
         </Route>
       </Route>
     </Routes>
