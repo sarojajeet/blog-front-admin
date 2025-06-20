@@ -19,6 +19,7 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
+import { IP } from "../../utils/Constent";
 
 const CategoryManagement = () => {
   const [categories, setCategories] = useState([]);
@@ -26,7 +27,7 @@ const CategoryManagement = () => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
+  console.log("Hii");
   // Columns for AntD Table
   const columns = [
     {
@@ -70,7 +71,7 @@ const CategoryManagement = () => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/api/categories");
+      const response = await axios.get(`${IP}/api/v1/blog-category`);
       setCategories(response.data.data);
     } catch (error) {
       message.error("Failed to fetch categories");
@@ -100,15 +101,19 @@ const CategoryManagement = () => {
 
       if (currentCategory) {
         // Update existing category
-        await axios.put(`/api/categories/${currentCategory._id}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        await axios.put(
+          `${IP}/api/v1/blog-category/${currentCategory._id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         message.success("Category updated successfully");
       } else {
         // Create new category
-        await axios.post("/api/categories", formData, {
+        await axios.post(`${IP}/api/v1/blog-category`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -153,7 +158,7 @@ const CategoryManagement = () => {
       content: "This action cannot be undone",
       onOk: async () => {
         try {
-          await axios.delete(`/api/categories/${id}`);
+          await axios.delete(`${IP}/api/v1/blog-category/${id}`);
           message.success("Category deleted successfully");
           fetchCategories();
         } catch (error) {

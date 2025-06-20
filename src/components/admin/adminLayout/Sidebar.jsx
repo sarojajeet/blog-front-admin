@@ -64,6 +64,15 @@ const Sidebar = () => {
       ),
     },
     {
+      key: "/admin/blogs",
+      icon: <BiCategory />,
+      label: (
+        <Link to="/admin/blogs" onClick={onClose}>
+          Blog List
+        </Link>
+      ),
+    },
+    {
       key: "/admin/blog-category",
       icon: <BiCategory />,
       label: (

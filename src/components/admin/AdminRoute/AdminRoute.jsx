@@ -3,11 +3,14 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Layout from "../adminLayout/Layout";
 import Dashboard from "../../dashboard/Dashbord";
 import CategoryManager from "../../category/CategoryManager";
-import BlogEditor from "../../BlogEditor/BlogEditor";
+// import BlogEditor from "../../BlogEditor/BlogEditor";
 import SubcategoryPage from "../../subcategory/SubcategoryPage";
 import BannerManager from "../../banner/BannerManager";
 import TextEditor from "../../BlogEditor/TextEditor";
 import CategoryManagement from "../../blogCategory/CategoryManagement";
+import BlogManagement from "../../BlogEditor/BlogManagement";
+import BlogDetail from "../../BlogEditor/BlogDetail";
+import EditBlog from "../../BlogEditor/EditBlog";
 
 const isAuthenticated = () => {
   const userID = localStorage.getItem("userID");
@@ -34,8 +37,11 @@ const AdminRoutes = () => {
           <Route path="category" element={<CategoryManager />} />
           <Route path="subcategories" element={<SubcategoryPage />} />
           <Route path="editor" element={<TextEditor />} />
+          <Route path="blogs" element={<BlogManagement />} />
           <Route path="banner" element={<BannerManager />} />
           <Route path="blog-category" element={<CategoryManagement />} />
+          <Route path="blogs/:slug" element={<BlogDetail />} />
+          <Route path="/edit-blog/:id" element={<EditBlog />} />
         </Route>
       </Route>
     </Routes>
