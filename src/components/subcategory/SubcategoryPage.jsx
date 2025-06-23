@@ -1,4 +1,3 @@
-// src/pages/SubcategoryPage.jsx
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -16,25 +15,41 @@ import { IP } from "../../utils/Constent";
 const SubcategoryPage = () => {
   const [form] = Form.useForm();
   const [subcategories, setSubcategories] = useState([]);
+  const [allSubcategories, setAllSubcategories] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [readOnlyFields, setReadOnlyFields] = useState({
+    category: false,
+    parent: false,
+  });
+  const [isChildForm, setIsChildForm] = useState(false); // NEW
 
-  // Load subcategories
+  const buildIndentedSubcategoryList = (subs, parentId = null, level = 0) => {
+    return subs
+      .filter((s) => (s.parent ? s.parent._id === parentId : parentId === null))
+      .map((s) => ({
+        ...s,
+        indentName: `${"— ".repeat(level)}${s.name}`,
+        children: buildIndentedSubcategoryList(subs, s._id, level + 1),
+      }))
+      .flat();
+  };
+
   const fetchSubcategories = async () => {
     setLoading(true);
     try {
       const res = await axios.get(`${IP}/api/v1/subcategories`);
-
-      setSubcategories(res.data);
+      setAllSubcategories(res.data);
+      const flat = buildIndentedSubcategoryList(res.data);
+      setSubcategories(flat);
     } catch (err) {
       message.error("Failed to load subcategories");
     }
     setLoading(false);
   };
 
-  // Load categories for dropdown
   const fetchCategories = async () => {
     try {
       const res = await axios.get(`${IP}/api/v1/categories`);
@@ -45,17 +60,26 @@ const SubcategoryPage = () => {
   };
 
   useEffect(() => {
-    fetchSubcategories();
     fetchCategories();
+    fetchSubcategories();
   }, []);
 
-  const openModal = (record = null) => {
+  const openModal = (record = null, isChild = false) => {
     setEditing(record);
+    setIsChildForm(isChild); // NEW
     setModalVisible(true);
+
     form.setFieldsValue({
       name: record?.name || "",
-      category: record?.category?._id || undefined,
+      category: record?.category || record?.category?._id || undefined,
+      parent: record?.parent || record?.parent?._id || null,
     });
+
+    if (isChild) {
+      setReadOnlyFields({ category: true, parent: true });
+    } else {
+      setReadOnlyFields({ category: false, parent: false });
+    }
   };
 
   const handleDelete = async (id) => {
@@ -70,7 +94,7 @@ const SubcategoryPage = () => {
 
   const handleFinish = async (values) => {
     try {
-      if (editing) {
+      if (editing && editing._id) {
         await axios.put(`${IP}/api/v1/subcategories/${editing._id}`, values);
         message.success("Subcategory updated");
       } else {
@@ -78,6 +102,8 @@ const SubcategoryPage = () => {
         message.success("Subcategory created");
       }
       setModalVisible(false);
+      setIsChildForm(false); // NEW
+      setReadOnlyFields({ category: false, parent: false });
       form.resetFields();
       fetchSubcategories();
     } catch {
@@ -86,14 +112,40 @@ const SubcategoryPage = () => {
   };
 
   const columns = [
-    { title: "Name", dataIndex: "name" },
-    { title: "Category", dataIndex: ["category", "name"] },
+    {
+      title: "Subcategory",
+      dataIndex: "indentName",
+    },
+    {
+      title: "Category",
+      dataIndex: ["category", "name"],
+    },
+    {
+      title: "Parent",
+      dataIndex: ["parent", "name"],
+      render: (text) => text || "-",
+    },
     {
       title: "Actions",
       render: (_, record) => (
         <div className="space-x-2">
           <Button onClick={() => openModal(record)} size="small">
             Edit
+          </Button>
+          <Button
+            size="small"
+            onClick={() =>
+              openModal(
+                {
+                  name: "",
+                  category: record.category._id,
+                  parent: record._id,
+                },
+                true
+              )
+            }
+          >
+            + Add Child
           </Button>
           <Popconfirm
             title="Are you sure?"
@@ -122,16 +174,20 @@ const SubcategoryPage = () => {
         columns={columns}
         rowKey="_id"
         loading={loading}
-        pagination={{ pageSize: 8 }}
+        pagination={{ pageSize: 10 }}
       />
 
       <Modal
-        title={editing ? "Edit Subcategory" : "New Subcategory"}
+        title={editing && editing._id ? "Edit Subcategory" : "New Subcategory"}
         open={modalVisible}
-        onCancel={() => setModalVisible(false)}
+        onCancel={() => {
+          setModalVisible(false);
+          setReadOnlyFields({ category: false, parent: false });
+          setIsChildForm(false); // NEW
+        }}
         onOk={() => form.submit()}
-        okText={editing ? "Update" : "Create"}
-        destroyOnHidden
+        okText={editing && editing._id ? "Update" : "Create"}
+        destroyOnClose
       >
         <Form form={form} layout="vertical" onFinish={handleFinish}>
           <Form.Item
@@ -147,7 +203,10 @@ const SubcategoryPage = () => {
             label="Parent Category"
             rules={[{ required: true }]}
           >
-            <Select placeholder="Select a category">
+            <Select
+              placeholder="Select a category"
+              disabled={readOnlyFields.category}
+            >
               {categories.map((cat) => (
                 <Select.Option key={cat._id} value={cat._id}>
                   {cat.name}
@@ -155,6 +214,22 @@ const SubcategoryPage = () => {
               ))}
             </Select>
           </Form.Item>
+
+          {isChildForm && (
+            <Form.Item name="parent" label="Parent Subcategory">
+              <Select
+                placeholder="Select a parent subcategory"
+                allowClear
+                disabled={readOnlyFields.parent}
+              >
+                {subcategories.map((sub) => (
+                  <Select.Option key={sub._id} value={sub._id}>
+                    {sub.indentName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
         </Form>
       </Modal>
     </div>
