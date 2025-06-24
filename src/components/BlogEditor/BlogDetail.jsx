@@ -90,7 +90,7 @@ const BlogDetail = () => {
       )}
 
       <div className="mb-6">
-        <Tag color="blue">{blog.category}</Tag>
+        <Tag color="blue">{blog.category.name}</Tag>
         {blog.tags.map((tag) => (
           <Tag key={tag}>{tag}</Tag>
         ))}

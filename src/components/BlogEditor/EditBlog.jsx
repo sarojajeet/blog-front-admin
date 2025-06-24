@@ -502,7 +502,7 @@ const EditBlog = () => {
         const blog = res.data;
         setFormData({
           title: blog.title,
-          category: blog.category || "Uncategorized",
+          category: blog.category._id || "", // ✅ Use the ID
           tags: blog.tags || [],
           metaDescription: blog.metaDescription || "",
           isDraft: blog.isDraft || false,
@@ -695,7 +695,10 @@ const EditBlog = () => {
   };
 
   const handleTagsChange = (value) => {
-    setFormData({ ...formData, tags: value });
+    setFormData({
+      ...formData,
+      tags: value,
+    });
   };
 
   const uploadImage = async (file) => {
