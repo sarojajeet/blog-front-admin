@@ -464,6 +464,7 @@ const EditBlog = () => {
   const quillRef = useRef(null);
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  console.log(categories);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -483,8 +484,9 @@ const EditBlog = () => {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(`${IP}/api/v1/categories`);
-      setCategories(res.data);
+      const res = await axios.get(`${IP}/api/v1/blog-category`);
+      console.log(res);
+      setCategories(res.data.data);
     } catch {
       message.error("Failed to load categories");
     }
@@ -502,7 +504,7 @@ const EditBlog = () => {
         const blog = res.data;
         setFormData({
           title: blog.title,
-          category: blog.category._id || "", // ✅ Use the ID
+          category: blog.category._id, // ✅ Use the ID
           tags: blog.tags || [],
           metaDescription: blog.metaDescription || "",
           isDraft: blog.isDraft || false,

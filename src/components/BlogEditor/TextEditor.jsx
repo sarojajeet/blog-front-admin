@@ -591,8 +591,8 @@ const TextEditor = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(`${IP}/api/v1/categories`);
-      setCategories(res.data);
+      const res = await axios.get(`${IP}/api/v1/blog-category`);
+      setCategories(res.data.data);
     } catch (err) {
       message.error("Failed to load categories");
     }
