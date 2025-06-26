@@ -19,9 +19,7 @@ const CreateStudyMaterialForm = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/v1/categoriesWithSubcategories"
-      );
+      const res = await axios.get(`${IP}/api/v1/categoriesWithSubcategories`);
       setCategories(res.data.categories);
     } catch (error) {
       console.error("Failed to fetch categories:", error);
