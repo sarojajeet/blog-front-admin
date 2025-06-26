@@ -11,6 +11,8 @@ import CategoryManagement from "../../blogCategory/CategoryManagement";
 import BlogManagement from "../../BlogEditor/BlogManagement";
 import BlogDetail from "../../BlogEditor/BlogDetail";
 import EditBlog from "../../BlogEditor/EditBlog";
+import CreateStudyMaterialForm from "../../studyMaterial/CreateStudyMaterialForm";
+import StudyMaterialListPage from "../../studyMaterial/StudyMaterialListPage";
 
 const isAuthenticated = () => {
   const userID = localStorage.getItem("userID");
@@ -42,6 +44,11 @@ const AdminRoutes = () => {
           <Route path="blog-category" element={<CategoryManagement />} />
           <Route path="blogs/:slug" element={<BlogDetail />} />
           <Route path="/edit-blog/:id" element={<EditBlog />} />
+          <Route path="/study-material" element={<CreateStudyMaterialForm />} />
+          <Route
+            path="/study-material-list"
+            element={<StudyMaterialListPage />}
+          />
         </Route>
       </Route>
     </Routes>

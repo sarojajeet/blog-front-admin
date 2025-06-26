@@ -81,6 +81,24 @@ const Sidebar = () => {
         </Link>
       ),
     },
+    {
+      key: "/admin/study-material",
+      icon: <BiCategory />,
+      label: (
+        <Link to="/admin/study-material" onClick={onClose}>
+          Add Study material
+        </Link>
+      ),
+    },
+    {
+      key: "/admin/study-material-list",
+      icon: <BiCategory />,
+      label: (
+        <Link to="/admin/study-material-list" onClick={onClose}>
+          Study material List
+        </Link>
+      ),
+    },
   ];
 
   return (
