@@ -13,6 +13,7 @@ import BlogDetail from "../../BlogEditor/BlogDetail";
 import EditBlog from "../../BlogEditor/EditBlog";
 import CreateStudyMaterialForm from "../../studyMaterial/CreateStudyMaterialForm";
 import StudyMaterialListPage from "../../studyMaterial/StudyMaterialListPage";
+import CreateCarousel from "../../crousel/CreateCarousel";
 
 const isAuthenticated = () => {
   const userID = localStorage.getItem("userID");
@@ -45,6 +46,7 @@ const AdminRoutes = () => {
           <Route path="blogs/:slug" element={<BlogDetail />} />
           <Route path="/edit-blog/:id" element={<EditBlog />} />
           <Route path="/study-material" element={<CreateStudyMaterialForm />} />
+          <Route path="/create-Carousel" element={<CreateCarousel />} />
           <Route
             path="/study-material-list"
             element={<StudyMaterialListPage />}

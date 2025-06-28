@@ -1,44 +1,94 @@
-import React, { useEffect, useState } from "react";
-import { Form, Select, message, Button, Upload, Input } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
-import { IP } from "../../utils/Constent";
+// CreateStudyMaterialForm.js
+import React, { useState, useEffect, useMemo } from "react";
+import { Form, Select, message, Button, Input } from "antd";
+import { useStudyMaterialData } from "./useStudyMaterialData";
+import { CategorySelector } from "./CategorySelector";
+import { ClassSelector } from "./ClassSelector";
+import { CarouselSelector } from "./CarouselSelector";
+import { FileUploader } from "./FileUploader";
 
 const { Option } = Select;
 
 const CreateStudyMaterialForm = () => {
-  const [categories, setCategories] = useState([]);
   const [selectionPath, setSelectionPath] = useState([]);
   const [fileList, setFileList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [selectedClassId, setSelectedClassId] = useState(null);
+  const [selectedCarouselId, setSelectedCarouselId] = useState(null);
+  const [selectedSubCarouselId, setSelectedSubCarouselId] = useState(null);
   const [form] = Form.useForm();
+
+  const {
+    categories,
+    classes,
+    carousels,
+    subCarousels,
+    loading,
+    fetchCategories,
+    fetchClasses,
+    fetchCarousels,
+    fetchSubCarousels,
+    createNewClass,
+    createNewCarousel,
+    createNewSubCarousel,
+    uploadMaterial,
+  } = useStudyMaterialData();
+
+  // Get the current category tree based on selection path
+  const currentCategoryTree = useMemo(() => {
+    let current = { subcategories: categories };
+    for (const id of selectionPath) {
+      const found = current.subcategories?.find((c) => c._id === id);
+      if (!found) break;
+      current = found;
+    }
+    return current;
+  }, [categories, selectionPath]);
+
+  // Check if the current selection is a leaf node (has no subcategories)
+  const isLeafCategory = useMemo(() => {
+    return (
+      !currentCategoryTree.subcategories ||
+      currentCategoryTree.subcategories.length === 0
+    );
+  }, [currentCategoryTree]);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
-  const fetchCategories = async () => {
-    try {
-      const res = await axios.get(`${IP}/api/v1/categoriesWithSubcategories`);
-      setCategories(res.data.categories);
-    } catch (error) {
-      console.error("Failed to fetch categories:", error);
-      message.error("Failed to load categories");
-    }
-  };
-
-  const getCurrentSubcategories = () => {
-    let current = { subcategories: categories };
-    for (const id of selectionPath) {
-      current = current.subcategories.find((c) => c._id === id);
-    }
-    return current?.subcategories || [];
-  };
-
-  const handleCategoryChange = (level, value) => {
+  const handleCategoryChange = async (level, value) => {
     const newPath = [...selectionPath.slice(0, level), value];
     setSelectionPath(newPath);
+
+    // Reset downstream selections
+    setSelectedClassId(null);
+    setSelectedCarouselId(null);
+    setSelectedSubCarouselId(null);
   };
+
+  // Load classes when we reach a leaf category
+  useEffect(() => {
+    if (isLeafCategory && selectionPath.length > 0) {
+      const subcategoryId = selectionPath[selectionPath.length - 1];
+      fetchClasses(subcategoryId);
+    }
+  }, [isLeafCategory, selectionPath, fetchClasses]);
+
+  // Load carousels when class is selected
+  useEffect(() => {
+    if (selectedClassId) {
+      fetchCarousels(selectedClassId);
+    }
+  }, [selectedClassId, fetchCarousels]);
+
+  // Load sub-carousels when carousel is selected
+  useEffect(() => {
+    if (selectedCarouselId) {
+      fetchSubCarousels(selectedCarouselId);
+    } else {
+      setSelectedSubCarouselId(null);
+    }
+  }, [selectedCarouselId, fetchSubCarousels]);
 
   const handleFileChange = ({ fileList }) => {
     setFileList(fileList.slice(-1)); // Only keep the latest file
@@ -50,30 +100,68 @@ const CreateStudyMaterialForm = () => {
       return;
     }
 
+    if (!selectedClassId) {
+      message.warning("Please select or create a class.");
+      return;
+    }
+    console.log(values);
+
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("language", values.language);
-    formData.append("pdf", fileList[0].originFileObj); // important
+    formData.append("pdf", fileList[0].originFileObj);
     formData.append("category", selectionPath[0]);
     selectionPath
       .slice(1)
       .forEach((subId) => formData.append("subCategories[]", subId));
+    formData.append("classId", selectedClassId);
+    if (selectedCarouselId) {
+      formData.append("carouselId", selectedCarouselId);
+    }
+    if (selectedSubCarouselId) {
+      formData.append("subCarouselId", selectedSubCarouselId);
+    }
 
     try {
-      setLoading(true);
-      await axios.post(`${IP}/api/v1/upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await uploadMaterial(formData);
       message.success("Study material uploaded!");
       form.resetFields();
       setSelectionPath([]);
       setFileList([]);
+      setSelectedClassId(null);
+      setSelectedCarouselId(null);
+      setSelectedSubCarouselId(null);
     } catch (error) {
-      console.error("Upload failed:", error);
       message.error("Upload failed.");
-    } finally {
-      setLoading(false); // ← Step 3
     }
+  };
+
+  // Render category selectors
+  const renderCategorySelectors = () => {
+    const selectors = [];
+    let currentOptions = categories;
+
+    for (let level = 0; level <= selectionPath.length; level++) {
+      if (level > 0) {
+        const parentId = selectionPath[level - 1];
+        const parent = currentOptions.find((c) => c._id === parentId);
+        currentOptions = parent?.subcategories || [];
+      }
+
+      if (!currentOptions.length) break;
+
+      selectors.push(
+        <CategorySelector
+          key={level}
+          level={level}
+          selectionPath={selectionPath}
+          currentOptions={currentOptions}
+          handleCategoryChange={handleCategoryChange}
+        />
+      );
+    }
+
+    return selectors;
   };
 
   return (
@@ -101,50 +189,53 @@ const CreateStudyMaterialForm = () => {
           </Select>
         </Form.Item>
 
-        {[...Array(selectionPath.length + 1)].map((_, level) => {
-          let options = level === 0 ? categories : categories;
-          for (let i = 0; i < level; i++) {
-            const parent = options.find((c) => c._id === selectionPath[i]);
-            options = parent?.subcategories || [];
-          }
+        {renderCategorySelectors()}
 
-          if (!options.length) return null;
+        {isLeafCategory && selectionPath.length > 0 && (
+          <ClassSelector
+            classes={classes}
+            selectedClassId={selectedClassId}
+            handleClassChange={setSelectedClassId}
+            onCreateNewClass={async (name) => {
+              const subcategoryId = selectionPath[selectionPath.length - 1];
+              const newClass = await createNewClass(name, subcategoryId);
+              setSelectedClassId(newClass._id);
+            }}
+          />
+        )}
 
-          return (
-            <Form.Item
-              key={level}
-              label={level === 0 ? "Category" : `Subcategory ${level}`}
-              required
-            >
-              <Select
-                value={selectionPath[level]}
-                placeholder={`Select ${
-                  level === 0 ? "category" : "subcategory"
-                }`}
-                onChange={(value) => handleCategoryChange(level, value)}
-              >
-                {options.map((cat) => (
-                  <Option key={cat._id} value={cat._id}>
-                    {cat.name}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          );
-        })}
+        {selectedClassId && (
+          <CarouselSelector
+            carousels={carousels}
+            selectedCarouselId={selectedCarouselId}
+            setSelectedCarouselId={setSelectedCarouselId}
+            selectedClassId={selectedClassId}
+            onCreateNewCarousel={async (name, classId) => {
+              const newCarousel = await createNewCarousel(name, classId);
+              setSelectedCarouselId(newCarousel._id);
+            }}
+          />
+        )}
 
-        {/* Upload PDF */}
-        <Form.Item label="Upload PDF" required>
-          <Upload
-            accept=".pdf"
-            beforeUpload={() => false} // Prevent auto upload
-            fileList={fileList}
-            onChange={handleFileChange}
-            maxCount={1}
-          >
-            <Button icon={<UploadOutlined />}>Select PDF File</Button>
-          </Upload>
-        </Form.Item>
+        {selectedCarouselId && (
+          <CarouselSelector
+            carousels={subCarousels}
+            selectedCarouselId={selectedSubCarouselId}
+            setSelectedCarouselId={setSelectedSubCarouselId}
+            selectedClassId={selectedClassId}
+            onCreateNewCarousel={async (name, classId) => {
+              const newSubCarousel = await createNewSubCarousel(
+                name,
+                selectedCarouselId,
+                classId
+              );
+              setSelectedSubCarouselId(newSubCarousel._id);
+            }}
+            label="Sub-Carousel"
+          />
+        )}
+
+        <FileUploader fileList={fileList} handleFileChange={handleFileChange} />
 
         <Form.Item>
           <Button

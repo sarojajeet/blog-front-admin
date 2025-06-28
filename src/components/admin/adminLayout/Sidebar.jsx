@@ -99,6 +99,15 @@ const Sidebar = () => {
         </Link>
       ),
     },
+    {
+      key: "/admin/create-Carousel",
+      icon: <BiCategory />,
+      label: (
+        <Link to="/admin/create-Carousel" onClick={onClose}>
+          Blog Category
+        </Link>
+      ),
+    },
   ];
 
   return (
