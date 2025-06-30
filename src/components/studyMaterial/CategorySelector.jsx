@@ -21,9 +21,9 @@ export const CategorySelector = ({
         onChange={(value) => handleCategoryChange(level, value)}
       >
         {currentOptions.map((cat) => (
-          <Option key={cat._id} value={cat._id}>
+          <Select.Option key={cat._id} value={cat._id}>
             {cat.name}
-          </Option>
+          </Select.Option>
         ))}
       </Select>
     </Form.Item>
