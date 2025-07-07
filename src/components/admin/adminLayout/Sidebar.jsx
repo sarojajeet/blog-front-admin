@@ -99,6 +99,33 @@ const Sidebar = () => {
         </Link>
       ),
     },
+    {
+      key: "/admin/result-category",
+      icon: <BiCategory />,
+      label: (
+        <Link to="/admin/result-category" onClick={onClose}>
+          Result Category
+        </Link>
+      ),
+    },
+    {
+      key: "/admin/upload-result",
+      icon: <BiCategory />,
+      label: (
+        <Link to="/admin/upload-result" onClick={onClose}>
+          Upload Result
+        </Link>
+      ),
+    },
+    {
+      key: "/admin/result-list",
+      icon: <BiCategory />,
+      label: (
+        <Link to="/admin/result-list" onClick={onClose}>
+          List Result
+        </Link>
+      ),
+    },
     // {
     //   key: "/admin/create-Carousel",
     //   icon: <BiCategory />,

@@ -14,6 +14,9 @@ import EditBlog from "../../BlogEditor/EditBlog";
 import CreateStudyMaterialForm from "../../studyMaterial/CreateStudyMaterialForm";
 import StudyMaterialListPage from "../../studyMaterial/StudyMaterialListPage";
 import CreateCarousel from "../../crousel/CreateCarousel";
+import UploadResult from "../../result/UploadResult";
+import ResultCategoryManager from "../../resultCategoryManager/ResultCategoryManager";
+import ResultList from "../../ResultList/ResultList";
 
 const isAuthenticated = () => {
   const userID = localStorage.getItem("userID");
@@ -47,6 +50,9 @@ const AdminRoutes = () => {
           <Route path="/edit-blog/:id" element={<EditBlog />} />
           <Route path="/study-material" element={<CreateStudyMaterialForm />} />
           <Route path="/create-Carousel" element={<CreateCarousel />} />
+          <Route path="/result-category" element={<ResultCategoryManager />} />
+          <Route path="/upload-result" element={<UploadResult />} />
+          <Route path="/result-list" element={<ResultList />} />
           <Route
             path="/study-material-list"
             element={<StudyMaterialListPage />}

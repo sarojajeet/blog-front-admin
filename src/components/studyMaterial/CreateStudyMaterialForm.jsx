@@ -1,11 +1,12 @@
 // CreateStudyMaterialForm.js
 import React, { useState, useEffect, useMemo } from "react";
-import { Form, Select, message, Button, Input } from "antd";
+import { Form, Select, message, Button, Input, Space } from "antd";
 import { useStudyMaterialData } from "./useStudyMaterialData";
 import { CategorySelector } from "./CategorySelector";
 import { ClassSelector } from "./ClassSelector";
 import { CarouselSelector } from "./CarouselSelector";
 import { FileUploader } from "./FileUploader";
+import BlogForm from "./BlogForm";
 
 const { Option } = Select;
 
@@ -15,6 +16,8 @@ const CreateStudyMaterialForm = () => {
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [selectedCarouselId, setSelectedCarouselId] = useState(null);
   const [selectedSubCarouselId, setSelectedSubCarouselId] = useState(null);
+  const [showBlogForm, setShowBlogForm] = useState(false);
+  const [blogData, setBlogData] = useState(null);
   const [form] = Form.useForm();
 
   const {
@@ -95,8 +98,8 @@ const CreateStudyMaterialForm = () => {
   };
 
   const handleFinish = async (values) => {
-    if (!fileList.length) {
-      message.warning("Please upload a PDF file.");
+    if (!fileList.length && !blogData) {
+      message.warning("Please upload a PDF file or add a blog.");
       return;
     }
 
@@ -104,22 +107,30 @@ const CreateStudyMaterialForm = () => {
       message.warning("Please select or create a class.");
       return;
     }
-    console.log(values);
 
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("language", values.language);
-    formData.append("pdf", fileList[0].originFileObj);
+
+    if (fileList.length) {
+      formData.append("pdf", fileList[0].originFileObj);
+    }
+
     formData.append("category", selectionPath[0]);
     selectionPath
       .slice(1)
       .forEach((subId) => formData.append("subCategories[]", subId));
     formData.append("classId", selectedClassId);
+
     if (selectedCarouselId) {
       formData.append("carouselId", selectedCarouselId);
     }
     if (selectedSubCarouselId) {
       formData.append("subCarouselId", selectedSubCarouselId);
+    }
+
+    if (blogData) {
+      formData.append("blogData", JSON.stringify(blogData));
     }
 
     try {
@@ -131,9 +142,17 @@ const CreateStudyMaterialForm = () => {
       setSelectedClassId(null);
       setSelectedCarouselId(null);
       setSelectedSubCarouselId(null);
+      setBlogData(null);
+      setShowBlogForm(false);
     } catch (error) {
       message.error("Upload failed.");
     }
+  };
+
+  const handleBlogSubmit = (data) => {
+    setBlogData(data);
+    setShowBlogForm(false);
+    message.success("Blog content added!");
   };
 
   // Render category selectors
@@ -247,6 +266,45 @@ const CreateStudyMaterialForm = () => {
             Submit
           </Button>
         </Form.Item>
+
+        <div className="mb-4">
+          <Space>
+            <FileUploader
+              fileList={fileList}
+              handleFileChange={handleFileChange}
+            />
+            <Button
+              type={blogData ? "default" : "primary"}
+              onClick={() => setShowBlogForm(!showBlogForm)}
+            >
+              {blogData ? "Edit Blog" : "Add Blog"}
+            </Button>
+          </Space>
+
+          {blogData && (
+            <div className="mt-2 p-2 border rounded bg-gray-50">
+              <h4 className="font-medium">{blogData.title}</h4>
+              <p className="text-sm text-gray-600">
+                {blogData.shortDescription}
+              </p>
+              <Button
+                type="link"
+                size="small"
+                danger
+                onClick={() => setBlogData(null)}
+              >
+                Remove Blog
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {showBlogForm && (
+          <BlogForm
+            onBlogSubmit={handleBlogSubmit}
+            onCancel={() => setShowBlogForm(false)}
+          />
+        )}
       </Form>
     </div>
   );
