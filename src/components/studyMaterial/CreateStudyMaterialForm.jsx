@@ -6,7 +6,7 @@ import { CategorySelector } from "./CategorySelector";
 import { ClassSelector } from "./ClassSelector";
 import { CarouselSelector } from "./CarouselSelector";
 import { FileUploader } from "./FileUploader";
-import BlogForm from "./BlogForm";
+// import BlogForm from "./BlogForm";
 
 const { Option } = Select;
 
@@ -299,12 +299,12 @@ const CreateStudyMaterialForm = () => {
           )}
         </div>
 
-        {showBlogForm && (
+        {/* {showBlogForm && (
           <BlogForm
             onBlogSubmit={handleBlogSubmit}
             onCancel={() => setShowBlogForm(false)}
           />
-        )}
+        )} */}
       </Form>
     </div>
   );
