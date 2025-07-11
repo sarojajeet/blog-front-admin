@@ -4,6 +4,7 @@ import { AppstoreOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import "./Sidebar.css";
 import { BiCategory } from "react-icons/bi";
+import { FaRegFileAlt } from "react-icons/fa";
 
 const Sidebar = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -81,60 +82,108 @@ const Sidebar = () => {
         </Link>
       ),
     },
+
     {
-      key: "/admin/study-material",
-      icon: <BiCategory />,
-      label: (
-        <Link to="/admin/study-material" onClick={onClose}>
-          Add Study material
-        </Link>
-      ),
+      key: "studymaterials",
+      icon: <FaRegFileAlt />,
+      label: "Study Materials",
+      children: [
+        {
+          key: "/admin/study-material",
+          icon: <BiCategory />,
+          label: (
+            <Link to="/admin/study-material" onClick={onClose}>
+              Add Study material
+            </Link>
+          ),
+        },
+        {
+          key: "/admin/study-material-list",
+          icon: <BiCategory />,
+          label: (
+            <Link to="/admin/study-material-list" onClick={onClose}>
+              Study material List
+            </Link>
+          ),
+        },
+      ],
     },
-    {
-      key: "/admin/study-material-list",
-      icon: <BiCategory />,
-      label: (
-        <Link to="/admin/study-material-list" onClick={onClose}>
-          Study material List
-        </Link>
-      ),
-    },
-    {
-      key: "/admin/result-category",
-      icon: <BiCategory />,
-      label: (
-        <Link to="/admin/result-category" onClick={onClose}>
-          Result Category
-        </Link>
-      ),
-    },
-    {
-      key: "/admin/upload-result",
-      icon: <BiCategory />,
-      label: (
-        <Link to="/admin/upload-result" onClick={onClose}>
-          Upload Result
-        </Link>
-      ),
-    },
-    {
-      key: "/admin/result-list",
-      icon: <BiCategory />,
-      label: (
-        <Link to="/admin/result-list" onClick={onClose}>
-          List Result
-        </Link>
-      ),
-    },
+
     // {
-    //   key: "/admin/create-Carousel",
+    //   key: "/admin/material-list",
     //   icon: <BiCategory />,
     //   label: (
-    //     <Link to="/admin/create-Carousel" onClick={onClose}>
-    //       Blog Category
+    //     <Link to="/admin/material-list" onClick={onClose}>
+    //       List Material
     //     </Link>
     //   ),
     // },
+    // {
+    //   key: "/admin/create-list",
+    //   icon: <BiCategory />,
+    //   label: (
+    //     <Link to="/admin/create-list" onClick={onClose}>
+    //       Create list Material
+    //     </Link>
+    //   ),
+    // },
+
+    {
+      key: "results",
+      icon: <FaRegFileAlt />,
+      label: "Result",
+      children: [
+        {
+          key: "/admin/upload-result",
+          label: (
+            <Link to="/admin/upload-result" onClick={onClose}>
+              Add Result
+            </Link>
+          ),
+        },
+        {
+          key: "/admin/result-list",
+          label: (
+            <Link to="/admin/result-list" onClick={onClose}>
+              Result List
+            </Link>
+          ),
+        },
+        {
+          key: "/admin/result-category",
+
+          label: (
+            <Link to="/admin/result-category" onClick={onClose}>
+              Result Category
+            </Link>
+          ),
+        },
+      ],
+    },
+
+    {
+      key: "teachers",
+      icon: <FaRegFileAlt />,
+      label: "Teacher",
+      children: [
+        {
+          key: "/admin/teacher-upload",
+          label: (
+            <Link to="/admin/teacher-upload" onClick={onClose}>
+              Add Teacher
+            </Link>
+          ),
+        },
+        {
+          key: "/admin/teachers/list",
+          label: (
+            <Link to="/admin/teachers/list" onClick={onClose}>
+              Teachers List
+            </Link>
+          ),
+        },
+      ],
+    },
   ];
 
   return (

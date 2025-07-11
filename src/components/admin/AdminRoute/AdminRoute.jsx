@@ -17,6 +17,14 @@ import CreateCarousel from "../../crousel/CreateCarousel";
 import UploadResult from "../../result/UploadResult";
 import ResultCategoryManager from "../../resultCategoryManager/ResultCategoryManager";
 import ResultList from "../../ResultList/ResultList";
+import Header from "../../studyMaterial/StudyMaterialist/Header";
+import CreateStudyMaterial from "../../studyMaterial/createStudyMaterial/CreateStudyMaterial";
+import ResultDetails from "../../ResultList/ResultDetails";
+import UpdateResult from "../../ResultList/UpdateResult";
+import UploadTeacher from "../../teacherProfile/UploadTeacher";
+import TeacherList from "../../teacherProfile/TeacherList";
+import TeacherDetails from "../../teacherProfile/TeacherDetails";
+import UpdateTeacher from "../../teacherProfile/UpdateTeacher";
 
 const isAuthenticated = () => {
   const userID = localStorage.getItem("userID");
@@ -53,6 +61,15 @@ const AdminRoutes = () => {
           <Route path="/result-category" element={<ResultCategoryManager />} />
           <Route path="/upload-result" element={<UploadResult />} />
           <Route path="/result-list" element={<ResultList />} />
+          <Route path="/material-list" element={<Header />} />
+          <Route path="/create-list" element={<CreateStudyMaterial />} />
+          <Route path="/results/:id" element={<ResultDetails />} />
+          <Route path="/results/update/:id" element={<UpdateResult />} />
+          <Route path="/teacher-upload" element={<UploadTeacher />} />
+          <Route path="/teachers/list" element={<TeacherList />} />
+          <Route path="/teachers/:id" element={<TeacherDetails />} />
+          <Route path="/teachers/edit/:id" element={<UpdateTeacher />} />
+
           <Route
             path="/study-material-list"
             element={<StudyMaterialListPage />}
