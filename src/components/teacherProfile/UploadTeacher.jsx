@@ -142,7 +142,7 @@ const UploadTeacher = () => {
 
     try {
       setLoading(true);
-      await axios.post(`${IP}/api/v1/teachers`, data, {
+      await axios.post(`${IP}/api/v1/create-teacher`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       message.success("✅ Teacher created successfully!");
